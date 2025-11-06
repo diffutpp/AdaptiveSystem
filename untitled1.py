@@ -10,7 +10,6 @@ Original file is located at
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from IPython.display import HTML
 
 NUM_BOIDS = 50
 WORLD_SIZE = [200.0, 200.0]
@@ -169,4 +168,4 @@ def animate(frame):
 
 
 ani = animation.FuncAnimation(fig, animate, frames=200, interval=50, blit=True)
-HTML(ani.to_html5_video())
+plt.show()
