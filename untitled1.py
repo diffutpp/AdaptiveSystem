@@ -27,11 +27,14 @@ SEPARATION_WEIGHT = 1.5
 EDGE_MARGIN = 5.0
 EDGE_TURN_FORCE = 1.0
 
+
 class Boid:
     def __init__(self, x, y):
         self.position = np.array([x, y], dtype=float)
         angle = np.random.uniform(0, 2 * np.pi)
-        self.velocity = np.array([np.cos(angle), np.sin(angle)], dtype=float) * MAX_SPEED
+        self.velocity = (
+            np.array([np.cos(angle), np.sin(angle)], dtype=float) * MAX_SPEED
+        )
         self.acceleration = np.zeros(2, dtype=float)
 
     def update(self):
@@ -96,7 +99,9 @@ class Boid:
         if total_separation > 0:
             separation_force /= total_separation
             if np.linalg.norm(separation_force) > 0:
-                separation_force = (separation_force / np.linalg.norm(separation_force)) * MAX_SPEED
+                separation_force = (
+                    separation_force / np.linalg.norm(separation_force)
+                ) * MAX_SPEED
             steering_sep = self.limit_force(separation_force - self.velocity)
         else:
             steering_sep = np.zeros(2, dtype=float)
@@ -104,7 +109,9 @@ class Boid:
         if total_alignment > 0:
             alignment_force /= total_alignment
             if np.linalg.norm(alignment_force) > 0:
-                alignment_force = (alignment_force / np.linalg.norm(alignment_force)) * MAX_SPEED
+                alignment_force = (
+                    alignment_force / np.linalg.norm(alignment_force)
+                ) * MAX_SPEED
             steering_align = self.limit_force(alignment_force - self.velocity)
         else:
             steering_align = np.zeros(2, dtype=float)
@@ -113,7 +120,9 @@ class Boid:
             cohesion_force /= total_cohesion
             direction_to_center = cohesion_force - self.position
             if np.linalg.norm(direction_to_center) > 0:
-                direction_to_center = (direction_to_center / np.linalg.norm(direction_to_center)) * MAX_SPEED
+                direction_to_center = (
+                    direction_to_center / np.linalg.norm(direction_to_center)
+                ) * MAX_SPEED
             steering_cohesion = self.limit_force(direction_to_center - self.velocity)
         else:
             steering_cohesion = np.zeros(2, dtype=float)
@@ -125,12 +134,13 @@ class Boid:
         self.apply_force(steering_cohesion * COHESION_WEIGHT)
         self.apply_force(steering_edges * 1.5)
 
+
 np.random.seed(None)
 
 boids = [
     Boid(
         np.random.uniform(EDGE_MARGIN, WORLD_SIZE[0] - EDGE_MARGIN),
-        np.random.uniform(EDGE_MARGIN, WORLD_SIZE[1] - EDGE_MARGIN)
+        np.random.uniform(EDGE_MARGIN, WORLD_SIZE[1] - EDGE_MARGIN),
     )
     for _ in range(NUM_BOIDS)
 ]
@@ -138,11 +148,12 @@ boids = [
 fig, ax = plt.subplots(figsize=(10, 10))
 ax.set_xlim(0, WORLD_SIZE[0])
 ax.set_ylim(0, WORLD_SIZE[1])
-ax.set_aspect('equal')
+ax.set_aspect("equal")
 ax.axes.xaxis.set_visible(False)
 ax.axes.yaxis.set_visible(False)
 
 scatter = ax.scatter([], [], s=10)
+
 
 def animate(frame):
     for boid in boids:
@@ -154,13 +165,8 @@ def animate(frame):
     positions = np.array([boid.position for boid in boids])
     scatter.set_offsets(positions)
 
-    return scatter,
-
-ani = animation.FuncAnimation(fig, animate,
-                              frames=400,
-                              interval=50,
-                              blit=True)
+    return (scatter,)
 
 
+ani = animation.FuncAnimation(fig, animate, frames=200, interval=50, blit=True)
 HTML(ani.to_html5_video())
-
